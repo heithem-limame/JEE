@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Panier</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:panelGrid columns="2">
+                <h:panelGrid columns="1">
+                    <p:panel header="Recherche par famille">
+                        <p:outputLabel value="Nom de famille :" for="nomFamille"/>
+                        <p:autoComplete id="nomFamille" value="#{venteController.famille}" forceSelection="true" immediate="false"
+                                        completeMethod="#{venteController.completeFamille}" queryDelay="500"
+                                        var="famille" itemLabel="#{famille.nomFamille}" itemValue="#{famille}" >
+                            <p:ajax event="itemSelect" listener="#{venteController.selectFamille}" update="nomMedicament"/>
+                        </p:autoComplete>
+
+                        <p:outputLabel value="Nom du médicament" for="nomMedicament"/>
+                        <p:selectOneListbox id="nomMedicament" value="#{venteController.medicament}" 
+                                            var="t" filter="true" filterMatchMode="startsWith"
+                                            >
+                            <f:selectItems value="#{venteController.listeMedicaments}" var="medic" 
+                                           itemLabel="#{medic.nomMedcament}" itemValue="#{medic}" />
+                            <p:column>
+                                <h:outputText value="#{t.nomMedcament}"/>
+                            </p:column> 
+                        </p:selectOneListbox>
+                        <p:commandButton value="Ajouter" actionListener="#{venteController.ajouterMedicament}"
+                                         update="tableVentes"/>
+
+                    </p:panel>
+                    <p:panel header="Recherche par code">
+                        <p:outputLabel value="Code du médicament" for="codeMedicament"/>
+                        <p:autoComplete id="codeMedicament" value="#{venteController.codeMedicament}" forceSelection="true" immediate="false"
+                                        completeMethod="#{venteController.completeMedicamentCode}" queryDelay="500"/>
+                        <p:commandButton value="Ajouter" actionListener="#{venteController.ajouterMedicament}"
+                                         update="tableVentes"/>
+
+                    </p:panel>
+                </h:panelGrid>
+
+                <p:dataTable id="tableVentes" value="#{venteController.listeVente}" var="item" 
+                             emptyMessage="Pas de medicament choisie "
+                             rows="10"  editable="true" editMode="cell" >
+
+                    <p:column style="width: 30px">
+                        <f:facet name="header">
+                            <h:outputText value="N°"/>
+                        </f:facet>
+                        <h:outputText value="#{item.medicamentPK.idMedicament}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="code"/>
+                        </f:facet>
+                        <h:outputText value="#{item.codeMedicament}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="nom"/>
+                        </f:facet>
+                        <h:outputText value="#{item.nomMedcament}"/>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Autorisation"/>
+                        </f:facet>
+                        <h:outputText value="#{(item.autorisation ? 'autorisé' : 'non autorisé')}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="CodeRayon"/>
+                        </f:facet>
+                        <h:outputText value="#{item.codeRayon}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Quantité"/>
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{item.quantite}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:spinner value="#{item.quantite}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Prix"/>
+                        </f:facet>
+                        <h:outputText value="#{(item.prixHT+(item.tauxTaxe * item.prixHT)/100)}"/>
+                    </p:column>
+                    <p:column style="width: 40px">
+                        <p:commandButton icon="ui-icon-document" oncomplete="PF('dlg').show()"
+                                         actionListener="#{venteController.affichInfo(item)}"/>
+                    </p:column>
+                </p:dataTable>
+
+
+
+            </p:panelGrid>
+
+
+
+            <p:dialog appendTo="@(body)" closeOnEscape="true" modal="true"
+                      widgetVar="dlg" width="600" height="500"
+                      header="Détails">
+                <p:panel header="Famille">
+                    <p:outputLabel value="#{venteController.medicamentInfo.familleMedicaments.nomFamille}"/>
+                </p:panel>
+                <p:panel header="Description">
+                    <p:outputLabel value="#{venteController.medicamentInfo.description}"/>
+                </p:panel>
+            </p:dialog>
+
+
+
+            <h:panelGrid  columns="2" style="margin: 10px auto; position: relative">
+                <p:commandButton icon="ui-icon-circle-close" value="Annuler" 
+                                 actionListener="#{venteController.annulerVente}"
+                                 update="tableVentes"/>
+                <p:commandButton icon="ui-icon-circle-check" value="Valider" 
+                                 actionListener="#{noteController.items}"
+                                 update="tableNote"/>
+            </h:panelGrid> 
+
+
+
+
+
+
+            <p:dialog appendTo="@(body)" closeOnEscape="true" modal="true"
+                      widgetVar="dlg" width="800" height="600"
+                      header="Rediger Note:">
+
+
+                <f:view>
+
+                    <h1><h:outputText value="Note"/></h1>
+                    <p:dataTable id="tableNotes" value="#{noteController.listeNote}" var="item"
+                                 rows="10"  editable="true" editMode="cell">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="DateNote"/>
+                            </f:facet>
+                            <h:outputText value="#{noteController.date}">
+                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Montant hors taxe"/>
+                            </f:facet>
+                            <h:outputText value="#{venteController.listeVente.prixHT}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="quantite">
+                                <h:outputText value="quantite"/>
+                            </f:facet>
+                            <h:outputText value="#{item.quantite}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Taux de taxe "/>
+                            </f:facet>
+                            <h:outputText value="#{item.tauxTaxe}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="MontantTTC"/>
+                            </f:facet>
+                            <h:outputText value="#{(item.prixHT+(item.tauxTaxe * item.prixHT)/100)*item.quantite}"/>
+                        </p:column>
+                        <p:summaryRow>
+                            <p:column colspan="3" style="text-align:right">
+                                <h:outputText value="Total:" />
+                            </p:column>
+                            <p:column>
+                                <!-- <h:outputText value="30.0">
+                                     <f:convertNumber type="currency" currencySymbol="$" />
+                                 </h:outputText>-->
+                            </p:column>
+                        </p:summaryRow>
+                    </p:dataTable>
+
+                </f:view>
+
+
+
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+
+</html>
+

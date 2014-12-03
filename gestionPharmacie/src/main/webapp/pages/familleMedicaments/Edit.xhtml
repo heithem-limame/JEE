@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="FamilleMedicamentsEditDlg" widgetVar="FamilleMedicamentsEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditFamilleMedicamentsTitle}">
+            <h:form id="FamilleMedicamentsEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{familleMedicamentsController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditFamilleMedicamentsLabel_codeFamille}" for="codeFamille" />
+                        <p:inputText id="codeFamille" value="#{familleMedicamentsController.selected.codeFamille}" title="#{bundle.EditFamilleMedicamentsTitle_codeFamille}" required="true" requiredMessage="#{bundle.EditFamilleMedicamentsRequiredMessage_codeFamille}"/>
+                        <p:outputLabel value="#{bundle.EditFamilleMedicamentsLabel_nomFamille}" for="nomFamille" />
+                        <p:inputText id="nomFamille" value="#{familleMedicamentsController.selected.nomFamille}" title="#{bundle.EditFamilleMedicamentsTitle_nomFamille}" />
+                        <p:outputLabel value="#{bundle.EditFamilleMedicamentsLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{familleMedicamentsController.selected.description}" title="#{bundle.EditFamilleMedicamentsTitle_description}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{familleMedicamentsController.update}" value="#{bundle.Save}" update="display,:FamilleMedicamentsListForm:datalist,:growl" oncomplete="handleSubmit(args, 'FamilleMedicamentsEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="FamilleMedicamentsEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

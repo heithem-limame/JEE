@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="MedicamentEditDlg" widgetVar="MedicamentEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditMedicamentTitle}">
+            <h:form id="MedicamentEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{medicamentController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_medicamentPK_idMedicament}" for="medicamentPK_idMedicament" />
+                        <p:inputText id="medicamentPK_idMedicament" value="#{medicamentController.selected.medicamentPK.idMedicament}" title="#{bundle.EditMedicamentTitle_medicamentPK_idMedicament}" required="true" requiredMessage="#{bundle.EditMedicamentRequiredMessage_medicamentPK_idMedicament}"/>
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_codeMedicament}" for="codeMedicament" />
+                        <p:inputText id="codeMedicament" value="#{medicamentController.selected.codeMedicament}" title="#{bundle.EditMedicamentTitle_codeMedicament}" required="true" requiredMessage="#{bundle.EditMedicamentRequiredMessage_codeMedicament}"/>
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_nomMedcament}" for="nomMedcament" />
+                        <p:inputText id="nomMedcament" value="#{medicamentController.selected.nomMedcament}" title="#{bundle.EditMedicamentTitle_nomMedcament}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_qtStock}" for="qtStock" />
+                        <p:inputText id="qtStock" value="#{medicamentController.selected.qtStock}" title="#{bundle.EditMedicamentTitle_qtStock}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_qtMin}" for="qtMin" />
+                        <p:inputText id="qtMin" value="#{medicamentController.selected.qtMin}" title="#{bundle.EditMedicamentTitle_qtMin}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_prixHT}" for="prixHT" />
+                        <p:inputText id="prixHT" value="#{medicamentController.selected.prixHT}" title="#{bundle.EditMedicamentTitle_prixHT}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_tauxTaxe}" for="tauxTaxe" />
+                        <p:inputText id="tauxTaxe" value="#{medicamentController.selected.tauxTaxe}" title="#{bundle.EditMedicamentTitle_tauxTaxe}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_description}" for="description" />
+                        <p:inputText id="description" value="#{medicamentController.selected.description}" title="#{bundle.EditMedicamentTitle_description}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_autorisation}" for="autorisation" />
+                        <p:selectBooleanCheckbox id="autorisation" value="#{medicamentController.selected.autorisation}" />
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_codeRayon}" for="codeRayon" />
+                        <p:selectOneMenu id="codeRayon" value="#{medicamentController.selected.codeRayon}" required="true" requiredMessage="#{bundle.EditMedicamentRequiredMessage_codeRayon}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{rayonController.itemsAvailableSelectOne}"
+                                           var="codeRayonItem"
+                                           itemValue="#{codeRayonItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditMedicamentLabel_familleMedicaments}" for="familleMedicaments" />
+                        <p:selectOneMenu id="familleMedicaments" value="#{medicamentController.selected.familleMedicaments}" required="true" requiredMessage="#{bundle.EditMedicamentRequiredMessage_familleMedicaments}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{familleMedicamentsController.itemsAvailableSelectOne}"
+                                           var="familleMedicamentsItem"
+                                           itemValue="#{familleMedicamentsItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{medicamentController.update}" value="#{bundle.Save}" update="display,:MedicamentListForm:datalist,:growl" oncomplete="handleSubmit(args, 'MedicamentEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="MedicamentEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

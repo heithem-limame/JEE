@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+        <ui:composition template="#{loginController.currentUser.role eq 1 ? '/WEB-INF/admin.xhtml' : '/WEB-INF/user.xhtml'}">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListRayonTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="RayonListForm">
+                <p:panel header="#{bundle.ListRayonTitle}">
+                    <p:dataTable id="datalist" value="#{rayonController.items}" var="item"
+                                 selectionMode="single" selection="#{rayonController.selected}"
+                                 paginator="true"
+                                 rowKey="#{item.codeRayon}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 >
+
+                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListRayonTitle_codeRayon}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.codeRayon}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListRayonTitle_nom}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.nom}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{rayonController.prepareCreate}" update=":RayonCreateForm" oncomplete="PF('RayonCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":RayonViewForm" oncomplete="PF('RayonViewDialog').show()" disabled="#{empty rayonController.selected}"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":RayonEditForm" oncomplete="PF('RayonEditDialog').show()" disabled="#{empty rayonController.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle.Delete}" actionListener="#{rayonController.destroy}" update=":growl,datalist" disabled="#{empty rayonController.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="View.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>
